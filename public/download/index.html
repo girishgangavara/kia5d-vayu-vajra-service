@@ -6,16 +6,16 @@
 
     <!--
       Smart app-download route for KIA-5D (/download on the KIA-5D site).
-      This is the permanent URL printed inside KIA-5D QR codes, so the store links below
-      can be changed at any time without reprinting the QR codes.
+      This is the permanent URL printed inside KIA-5D QR codes, so the store links
+      below can be changed at any time without reprinting the QR codes.
 
       Android  -> Google Play
       iOS/iPadOS -> Apple App Store
       Desktop / unknown -> this page, with both store buttons
 
-      It is a standalone static page (served straight from /public) so that a scanned QR
-      code reaches the store without downloading the React bundle first. Detection runs
-      in the inline script below, before any layout or network request happens.
+      Styled to match the printed KIA-5D poster so the scan-to-page journey feels
+      continuous. It stays a standalone static page (served straight from /public)
+      so a scanned QR reaches the store without downloading the React bundle first.
     -->
     <script>
       (function () {
@@ -66,7 +66,7 @@
       name="description"
       content="Download the KIA-5D Vayu Vajra app for live bus tracking, schedules, vehicle information and more."
     />
-    <meta name="author" content="Girish, BMTC-Depot-18" />
+    <meta name="author" content="Girish, BMTC" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
     <meta property="og:type" content="website" />
@@ -83,35 +83,19 @@
     />
 
     <style>
-      /* Same design tokens as src/index.css, inlined so this route loads
-         with zero extra requests (no CSS file, no webfont). */
+      /* Palette lifted from the printed KIA-5D poster. */
       :root {
-        --background: hsl(222 47% 6%);
-        --foreground: hsl(210 40% 98%);
-        --muted-foreground: hsl(215 20% 65%);
-        --primary: hsl(199 89% 48%);
-        --accent: hsl(43 96% 56%);
-        --border: hsl(222 30% 18%);
-        --secondary: hsl(222 30% 14%);
-        --gradient-primary: linear-gradient(
-          135deg,
-          hsl(199 89% 48%) 0%,
-          hsl(220 90% 56%) 50%,
-          hsl(260 80% 60%) 100%
-        );
-        --gradient-hero: linear-gradient(
-          180deg,
-          hsl(222 47% 6%) 0%,
-          hsl(222 47% 10%) 50%,
-          hsl(222 47% 6%) 100%
-        );
-        --gradient-glass: linear-gradient(
-          135deg,
-          hsl(0 0% 100% / 0.1) 0%,
-          hsl(0 0% 100% / 0.05) 100%
-        );
-        --shadow-card: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
-        --shadow-glow: 0 0 60px hsl(199 89% 48% / 0.3);
+        --blue-900: #0a2472;
+        --blue-800: #10399b;
+        --blue-700: #1746c4;
+        --blue-600: #2563eb;
+        --blue-100: #e8f0ff;
+        --blue-50: #f4f8ff;
+        --gold: #ffc72c;
+        --ink: #0b1f4d;
+        --ink-soft: #4a5b85;
+        --white: #ffffff;
+        --line: #d8e4fb;
       }
 
       *,
@@ -127,242 +111,344 @@
       body {
         margin: 0;
         min-height: 100vh;
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem 2.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--background);
-        background-image: var(--gradient-hero);
-        color: var(--foreground);
-        font-family: "Outfit", ui-sans-serif, system-ui, -apple-system,
-          "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(160deg, var(--blue-800) 0%, var(--blue-600) 45%, #4f8bf5 100%);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
-        line-height: 1.5;
+        line-height: 1.45;
       }
 
-      .card {
-        position: relative;
-        overflow: hidden;
+      .poster {
         width: 100%;
-        max-width: 34rem;
-        padding: 2.5rem 1.5rem;
-        text-align: center;
-        border-radius: 1.5rem;
-        border: 1px solid hsl(0 0% 100% / 0.2);
-        background-color: hsl(0 0% 100% / 0.05);
-        background-image: var(--gradient-glass);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        box-shadow: var(--shadow-card);
+        max-width: 30rem;
+        background: var(--white);
+        border: 3px solid var(--blue-900);
+        border-radius: 1.25rem;
+        overflow: hidden;
+        box-shadow: 0 30px 60px -20px rgba(3, 16, 51, 0.55);
       }
 
-      @media (min-width: 640px) {
-        .card {
-          padding: 3rem;
-        }
-      }
-
-      /* Decorative glows - purely cosmetic, hidden from assistive tech. */
-      .glow {
-        position: absolute;
-        border-radius: 9999px;
-        filter: blur(64px);
-        pointer-events: none;
-      }
-
-      .glow-primary {
-        top: -3rem;
-        right: -3rem;
-        width: 16rem;
-        height: 16rem;
-        background: hsl(199 89% 48% / 0.2);
-      }
-
-      .glow-accent {
-        bottom: -3rem;
-        left: -3rem;
-        width: 12rem;
-        height: 12rem;
-        background: hsl(43 96% 56% / 0.2);
-      }
-
-      .content {
+      /* ---------------------------------------------------------- masthead */
+      .masthead {
         position: relative;
-        z-index: 1;
+        padding: 1.5rem 1.25rem 1.35rem;
+        background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 100%);
+        color: var(--white);
       }
 
-      .logo {
-        width: 5rem;
-        height: 5rem;
-        margin: 0 auto 1.5rem;
+      .kicker {
+        position: absolute;
+        top: 0.9rem;
+        right: 1.1rem;
+        margin: 0;
+        text-align: right;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        line-height: 1.35;
+      }
+
+      .kicker span {
+        display: block;
+        color: var(--gold);
+      }
+
+      .brand {
         display: flex;
         align-items: center;
+        gap: 0.85rem;
+      }
+
+      .brand-mark {
+        width: 3.25rem;
+        height: 3.25rem;
+        flex: none;
+        border-radius: 0.85rem;
+        background: linear-gradient(160deg, var(--blue-600), var(--blue-800));
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        border-radius: 1rem;
-        background-image: var(--gradient-primary);
-        box-shadow: var(--shadow-glow);
+        gap: 1px;
       }
 
-      .logo svg {
-        width: 2.5rem;
-        height: 2.5rem;
-        color: #fff;
+      .brand-mark svg {
+        width: 1.4rem;
+        height: 1.4rem;
+        color: var(--white);
       }
 
-      h1 {
+      .brand-mark span {
+        font-size: 0.5rem;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .brand h1 {
         margin: 0;
-        font-size: 2.5rem;
+        font-size: clamp(2.1rem, 11vw, 2.9rem);
         font-weight: 800;
         letter-spacing: -0.02em;
-        line-height: 1.1;
-        /* Fallback colour first, in case background-clip: text is unsupported. */
-        color: var(--foreground);
-        background-image: var(--gradient-primary);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
+        line-height: 1;
       }
 
-      @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-        h1 {
-          -webkit-text-fill-color: currentColor;
-        }
+      .brand p {
+        margin: 0.15rem 0 0;
+        font-size: clamp(0.85rem, 3.6vw, 1.05rem);
+        font-weight: 700;
+        letter-spacing: 0.06em;
       }
 
-      .subtitle {
-        margin: 0.5rem 0 1.5rem;
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: var(--accent);
+      .rule {
+        margin: 0.85rem 0 0.5rem;
+        height: 3px;
+        width: 3.5rem;
+        background: var(--gold);
+        border-radius: 2px;
       }
 
       .tagline {
-        margin: 0 auto 2rem;
-        max-width: 24rem;
-        color: var(--muted-foreground);
-        font-size: 1.0625rem;
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .tagline b {
+        color: var(--gold);
+        font-weight: 800;
+      }
+
+      /* ---------------------------------------------------------- features */
+      .features {
+        list-style: none;
+        margin: 0;
+        padding: 1.15rem 1.25rem 0.5rem;
+      }
+
+      .features li {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .features li:last-child {
+        border-bottom: 0;
+      }
+
+      .f-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        flex: none;
+        border-radius: 999px;
+        background: linear-gradient(160deg, var(--blue-600), var(--blue-800));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .f-icon svg {
+        width: 1.15rem;
+        height: 1.15rem;
+        color: var(--white);
+      }
+
+      .f-text strong {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--blue-700);
+      }
+
+      .f-text > span {
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+
+      /* ------------------------------------------------------ download bar */
+      .download-bar {
+        margin: 0.5rem 0 0;
+        padding: 0.6rem 1.25rem;
+        background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 100%);
+        color: var(--white);
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border-top: 3px solid var(--gold);
+        border-bottom: 3px solid var(--gold);
       }
 
       .stores {
         display: flex;
         flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
+        gap: 0.75rem;
+        padding: 1.15rem 1.25rem 0.5rem;
       }
 
-      @media (min-width: 640px) {
+      @media (min-width: 26rem) {
         .stores {
           flex-direction: row;
-          justify-content: center;
         }
       }
 
       .store-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        min-height: 3.5rem;
-        padding: 0.875rem 1.25rem;
-        border-radius: 0.75rem;
-        border: 1px solid var(--border);
-        background-color: hsl(0 0% 100% / 0.05);
-        background-image: var(--gradient-glass);
-        color: var(--foreground);
-        text-align: left;
-        text-decoration: none;
-        transition: background-color 0.2s ease, transform 0.2s ease,
-          border-color 0.2s ease;
-      }
-
-      .store-btn:hover {
-        background-color: hsl(199 89% 48% / 0.2);
-        border-color: hsl(199 89% 48% / 0.6);
-        transform: translateY(-2px);
-      }
-
-      /* Visible, high-contrast keyboard focus ring. */
-      .store-btn:focus-visible,
-      .site-link:focus-visible,
-      .fallback-link:focus-visible {
-        outline: 3px solid var(--accent);
-        outline-offset: 3px;
-      }
-
-      .store-icon {
-        flex: none;
-        width: 2.5rem;
-        height: 2.5rem;
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 0.5rem;
-        background: var(--secondary);
+        gap: 0.6rem;
+        min-height: 3.4rem;
+        padding: 0.7rem 0.9rem;
+        border-radius: 0.7rem;
+        background: #0d1117;
+        border: 2px solid #0d1117;
+        color: var(--white);
+        text-decoration: none;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
 
-      .store-icon svg {
-        width: 1.5rem;
-        height: 1.5rem;
+      .store-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -8px rgba(3, 16, 51, 0.6);
       }
 
-      .store-icon .play {
-        color: hsl(142 71% 45%);
+      .store-btn:focus-visible,
+      .fallback-link:focus-visible,
+      .site-link:focus-visible {
+        outline: 3px solid var(--gold);
+        outline-offset: 3px;
       }
 
-      .store-icon .apple {
-        color: var(--foreground);
+      .store-btn svg {
+        width: 1.6rem;
+        height: 1.6rem;
+        flex: none;
       }
 
-      .store-label small {
+      .store-btn small {
         display: block;
-        font-size: 0.6875rem;
+        font-size: 0.6rem;
         letter-spacing: 0.05em;
         text-transform: uppercase;
-        color: var(--muted-foreground);
+        opacity: 0.85;
       }
 
-      .store-label strong {
+      .store-btn strong {
         display: block;
-        font-size: 1.0625rem;
-        font-weight: 600;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.15;
       }
 
-      .note {
-        margin: 1.75rem 0 0;
-        font-size: 0.8125rem;
-        color: var(--muted-foreground);
+      /* -------------------------------------------------------- auto-open */
+      .auto {
+        display: grid;
+        gap: 0.6rem;
+        padding: 0.6rem 1.25rem 1.15rem;
+      }
+
+      @media (min-width: 26rem) {
+        .auto {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .auto > div {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.65rem 0.75rem;
+        background: var(--blue-50);
+        border: 1px solid var(--line);
+        border-radius: 0.7rem;
+      }
+
+      .auto .dot {
+        width: 1.65rem;
+        height: 1.65rem;
+        flex: none;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--blue-600);
+      }
+
+      .auto .dot svg {
+        width: 0.9rem;
+        height: 0.9rem;
+        color: var(--white);
+      }
+
+      .auto strong {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--blue-700);
+      }
+
+      .auto span span {
+        font-size: 0.72rem;
+        color: var(--ink-soft);
+      }
+
+      /* ------------------------------------------------------------ footer */
+      .poster-footer {
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 100%);
+        color: var(--white);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+
+      .poster-footer .safe {
+        color: var(--gold);
       }
 
       .site-link {
-        display: inline-block;
-        margin-top: 1rem;
-        font-size: 0.875rem;
-        color: var(--primary);
+        display: block;
+        margin: 0.9rem auto 0;
+        text-align: center;
+        color: var(--white);
+        font-size: 0.8rem;
         text-decoration: underline;
         text-underline-offset: 3px;
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        .store-btn {
-          transition: none;
-        }
-        .store-btn:hover {
-          transform: none;
-        }
-        .spinner {
-          animation: none;
-        }
-      }
-
       /* --- Redirect state ------------------------------------------------
          The inline script sets data-redirecting on <html> before the body is
-         parsed, so mobile visitors never see the desktop page flash by. */
+         parsed, so mobile visitors never see the poster page flash by. */
       .redirect-note {
         display: none;
         max-width: 22rem;
         text-align: center;
+        background: var(--white);
+        border: 3px solid var(--blue-900);
+        border-radius: 1.25rem;
+        padding: 2rem 1.5rem;
+        box-shadow: 0 30px 60px -20px rgba(3, 16, 51, 0.55);
       }
 
-      html[data-redirecting] .card {
+      html[data-redirecting] .page {
         display: none;
       }
 
@@ -375,9 +461,9 @@
         width: 2rem;
         height: 2rem;
         margin: 0 auto 1rem;
-        border-radius: 9999px;
-        border: 3px solid hsl(0 0% 100% / 0.15);
-        border-top-color: var(--primary);
+        border-radius: 999px;
+        border: 3px solid var(--blue-100);
+        border-top-color: var(--blue-600);
         animation: spin 0.8s linear infinite;
       }
 
@@ -389,17 +475,28 @@
 
       .redirect-note p {
         margin: 0;
-        color: var(--foreground);
-        font-weight: 500;
+        font-weight: 700;
+        color: var(--ink);
       }
 
       .fallback-link {
         display: inline-block;
         margin-top: 0.75rem;
-        color: var(--primary);
-        font-size: 0.9375rem;
+        color: var(--blue-700);
+        font-size: 0.9rem;
         text-decoration: underline;
         text-underline-offset: 3px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .store-btn,
+        .store-btn:hover {
+          transition: none;
+          transform: none;
+        }
+        .spinner {
+          animation: none;
+        }
       }
     </style>
   </head>
@@ -427,28 +524,87 @@
     </div>
 
     <!-- Desktop / unknown device fallback. Also what no-JS visitors see. -->
-    <main class="card">
-      <div class="glow glow-primary" aria-hidden="true"></div>
-      <div class="glow glow-accent" aria-hidden="true"></div>
+    <div class="page">
+      <main class="poster">
+        <header class="masthead">
+          <p class="kicker">YOUR JOURNEY<span>OUR PRIORITY</span></p>
 
-      <div class="content">
-        <div class="logo" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="5" y="3" width="14" height="14" rx="2" />
-            <path d="M5 9h14" />
-            <path d="M9 17v3" />
-            <path d="M15 17v3" />
-            <circle cx="8.5" cy="13.5" r="1" />
-            <circle cx="15.5" cy="13.5" r="1" />
-          </svg>
-        </div>
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="3" width="14" height="14" rx="2" />
+                <path d="M5 9h14" />
+                <path d="M9 17v3" />
+                <path d="M15 17v3" />
+                <circle cx="8.5" cy="13.5" r="1" />
+                <circle cx="15.5" cy="13.5" r="1" />
+              </svg>
+              <span>KIA-5D</span>
+            </div>
+            <div>
+              <h1>KIA-5D</h1>
+              <p>VAYU VAJRA SERVICE</p>
+            </div>
+          </div>
 
-        <h1>KIA-5D</h1>
-        <p class="subtitle">Vayu Vajra Service</p>
+          <div class="rule" aria-hidden="true"></div>
+          <p class="tagline">Track <b>&bull;</b> Plan <b>&bull;</b> Travel Smarter</p>
+        </header>
 
-        <p class="tagline">
-          Track your bus. Check schedules. See approaching vehicles.
-        </p>
+        <ul class="features">
+          <li>
+            <span class="f-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </span>
+            <span class="f-text">
+              <strong>Live Tracking</strong>
+              <span>Track your bus in real time</span>
+            </span>
+          </li>
+          <li>
+            <span class="f-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            </span>
+            <span class="f-text">
+              <strong>Live Schedules</strong>
+              <span>Check timings instantly</span>
+            </span>
+          </li>
+          <li>
+            <span class="f-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+            </span>
+            <span class="f-text">
+              <strong>Crew Info</strong>
+              <span>Driver &amp; conductor details</span>
+            </span>
+          </li>
+          <li>
+            <span class="f-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </span>
+            <span class="f-text">
+              <strong>Notifications</strong>
+              <span>Get important updates</span>
+            </span>
+          </li>
+        </ul>
+
+        <p class="download-bar">Download Now</p>
 
         <div class="stores">
           <a
@@ -456,12 +612,10 @@
             href="https://play.google.com/store/apps/details?id=com.girishkia5dservices"
             aria-label="Get it on Google Play"
           >
-            <span class="store-icon" aria-hidden="true">
-              <svg class="play" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
-              </svg>
-            </span>
-            <span class="store-label">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
+            </svg>
+            <span>
               <small>Get it on</small>
               <strong>Google Play</strong>
             </span>
@@ -472,25 +626,48 @@
             href="https://apps.apple.com/in/app/kia-5d/id6751247222"
             aria-label="Download on the App Store"
           >
-            <span class="store-icon" aria-hidden="true">
-              <svg class="apple" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-              </svg>
-            </span>
-            <span class="store-label">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+            </svg>
+            <span>
               <small>Download on the</small>
               <strong>App Store</strong>
             </span>
           </a>
         </div>
 
-        <p class="note">
-          Scan the KIA-5D QR code on your phone and the right store opens
-          automatically.
-        </p>
+        <div class="auto">
+          <div>
+            <span class="dot" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            </span>
+            <span>
+              <strong>Android users</strong>
+              <span>Automatically opens in Google Play Store</span>
+            </span>
+          </div>
+          <div>
+            <span class="dot" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            </span>
+            <span>
+              <strong>iOS users</strong>
+              <span>Automatically opens in App Store</span>
+            </span>
+          </div>
+        </div>
 
-        <a class="site-link" href="/">Back to the KIA-5D website</a>
-      </div>
-    </main>
+        <footer class="poster-footer">
+          <span>SMART TRAVEL &middot; BETTER JOURNEYS</span>
+          <span class="safe">SAFE &bull; RELIABLE &bull; CONNECTED</span>
+        </footer>
+      </main>
+
+      <a class="site-link" href="/">Back to the KIA-5D website</a>
+    </div>
   </body>
 </html>

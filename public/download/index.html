@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--
+      Smart app-download route for KIA-5D (/download on the KIA-5D site).
+      This is the permanent URL printed inside KIA-5D QR codes, so the store links below
+      can be changed at any time without reprinting the QR codes.
+
+      Android  -> Google Play
+      iOS/iPadOS -> Apple App Store
+      Desktop / unknown -> this page, with both store buttons
+
+      It is a standalone static page (served straight from /public) so that a scanned QR
+      code reaches the store without downloading the React bundle first. Detection runs
+      in the inline script below, before any layout or network request happens.
+    -->
+    <script>
+      (function () {
+        "use strict";
+
+        /* Hardcoded destinations. Never read a redirect target from the URL. */
+        var ANDROID_URL =
+          "https://play.google.com/store/apps/details?id=com.girishkia5dservices";
+        var IOS_URL = "https://apps.apple.com/in/app/kia-5d/id6751247222";
+
+        try {
+          var nav = window.navigator || {};
+          var ua = nav.userAgent || "";
+
+          /* Legacy Windows Phone user agents claim to be "like Android" and
+             "like iPhone OS", so rule them out before anything else. */
+          if (/Windows Phone|IEMobile/i.test(ua)) return;
+
+          var isAndroid = /Android/i.test(ua);
+
+          /* iPadOS Safari reports a Mac-like user agent, so the classic
+             /iPad/ test alone is not enough - a touch-capable "MacIntel"
+             is an iPad, never a real Mac. */
+          var isIOS =
+            /iPad|iPhone|iPod/i.test(ua) ||
+            (nav.platform === "MacIntel" && nav.maxTouchPoints > 1);
+
+          if (!isAndroid && !isIOS) return;
+
+          /* Swap the page for a short "opening the store" notice (styled below)
+             so nothing flashes on screen while the store loads. */
+          document.documentElement.setAttribute(
+            "data-redirecting",
+            isAndroid ? "android" : "ios"
+          );
+
+          /* replace() keeps this page out of the history stack, so Back does
+             not bounce the user into the redirect again. */
+          window.location.replace(isAndroid ? ANDROID_URL : IOS_URL);
+        } catch (e) {
+          /* Any failure just leaves the full page visible with both buttons. */
+        }
+      })();
+    </script>
+
+    <title>KIA-5D | Download App</title>
+    <meta
+      name="description"
+      content="Download the KIA-5D Vayu Vajra app for live bus tracking, schedules, vehicle information and more."
+    />
+    <meta name="author" content="Girish, BMTC-Depot-18" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="KIA-5D | Download App" />
+    <meta
+      property="og:description"
+      content="Download the KIA-5D Vayu Vajra app for live bus tracking, schedules, vehicle information and more."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KIA-5D | Download App" />
+    <meta
+      name="twitter:description"
+      content="Download the KIA-5D Vayu Vajra app for live bus tracking, schedules, vehicle information and more."
+    />
+
+    <style>
+      /* Same design tokens as src/index.css, inlined so this route loads
+         with zero extra requests (no CSS file, no webfont). */
+      :root {
+        --background: hsl(222 47% 6%);
+        --foreground: hsl(210 40% 98%);
+        --muted-foreground: hsl(215 20% 65%);
+        --primary: hsl(199 89% 48%);
+        --accent: hsl(43 96% 56%);
+        --border: hsl(222 30% 18%);
+        --secondary: hsl(222 30% 14%);
+        --gradient-primary: linear-gradient(
+          135deg,
+          hsl(199 89% 48%) 0%,
+          hsl(220 90% 56%) 50%,
+          hsl(260 80% 60%) 100%
+        );
+        --gradient-hero: linear-gradient(
+          180deg,
+          hsl(222 47% 6%) 0%,
+          hsl(222 47% 10%) 50%,
+          hsl(222 47% 6%) 100%
+        );
+        --gradient-glass: linear-gradient(
+          135deg,
+          hsl(0 0% 100% / 0.1) 0%,
+          hsl(0 0% 100% / 0.05) 100%
+        );
+        --shadow-card: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
+        --shadow-glow: 0 0 60px hsl(199 89% 48% / 0.3);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--background);
+        background-image: var(--gradient-hero);
+        color: var(--foreground);
+        font-family: "Outfit", ui-sans-serif, system-ui, -apple-system,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.5;
+      }
+
+      .card {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 34rem;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        border-radius: 1.5rem;
+        border: 1px solid hsl(0 0% 100% / 0.2);
+        background-color: hsl(0 0% 100% / 0.05);
+        background-image: var(--gradient-glass);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: var(--shadow-card);
+      }
+
+      @media (min-width: 640px) {
+        .card {
+          padding: 3rem;
+        }
+      }
+
+      /* Decorative glows - purely cosmetic, hidden from assistive tech. */
+      .glow {
+        position: absolute;
+        border-radius: 9999px;
+        filter: blur(64px);
+        pointer-events: none;
+      }
+
+      .glow-primary {
+        top: -3rem;
+        right: -3rem;
+        width: 16rem;
+        height: 16rem;
+        background: hsl(199 89% 48% / 0.2);
+      }
+
+      .glow-accent {
+        bottom: -3rem;
+        left: -3rem;
+        width: 12rem;
+        height: 12rem;
+        background: hsl(43 96% 56% / 0.2);
+      }
+
+      .content {
+        position: relative;
+        z-index: 1;
+      }
+
+      .logo {
+        width: 5rem;
+        height: 5rem;
+        margin: 0 auto 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        background-image: var(--gradient-primary);
+        box-shadow: var(--shadow-glow);
+      }
+
+      .logo svg {
+        width: 2.5rem;
+        height: 2.5rem;
+        color: #fff;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        /* Fallback colour first, in case background-clip: text is unsupported. */
+        color: var(--foreground);
+        background-image: var(--gradient-primary);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+        h1 {
+          -webkit-text-fill-color: currentColor;
+        }
+      }
+
+      .subtitle {
+        margin: 0.5rem 0 1.5rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--accent);
+      }
+
+      .tagline {
+        margin: 0 auto 2rem;
+        max-width: 24rem;
+        color: var(--muted-foreground);
+        font-size: 1.0625rem;
+      }
+
+      .stores {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      @media (min-width: 640px) {
+        .stores {
+          flex-direction: row;
+          justify-content: center;
+        }
+      }
+
+      .store-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        min-height: 3.5rem;
+        padding: 0.875rem 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border);
+        background-color: hsl(0 0% 100% / 0.05);
+        background-image: var(--gradient-glass);
+        color: var(--foreground);
+        text-align: left;
+        text-decoration: none;
+        transition: background-color 0.2s ease, transform 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .store-btn:hover {
+        background-color: hsl(199 89% 48% / 0.2);
+        border-color: hsl(199 89% 48% / 0.6);
+        transform: translateY(-2px);
+      }
+
+      /* Visible, high-contrast keyboard focus ring. */
+      .store-btn:focus-visible,
+      .site-link:focus-visible,
+      .fallback-link:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      .store-icon {
+        flex: none;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        background: var(--secondary);
+      }
+
+      .store-icon svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
+
+      .store-icon .play {
+        color: hsl(142 71% 45%);
+      }
+
+      .store-icon .apple {
+        color: var(--foreground);
+      }
+
+      .store-label small {
+        display: block;
+        font-size: 0.6875rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--muted-foreground);
+      }
+
+      .store-label strong {
+        display: block;
+        font-size: 1.0625rem;
+        font-weight: 600;
+      }
+
+      .note {
+        margin: 1.75rem 0 0;
+        font-size: 0.8125rem;
+        color: var(--muted-foreground);
+      }
+
+      .site-link {
+        display: inline-block;
+        margin-top: 1rem;
+        font-size: 0.875rem;
+        color: var(--primary);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .store-btn {
+          transition: none;
+        }
+        .store-btn:hover {
+          transform: none;
+        }
+        .spinner {
+          animation: none;
+        }
+      }
+
+      /* --- Redirect state ------------------------------------------------
+         The inline script sets data-redirecting on <html> before the body is
+         parsed, so mobile visitors never see the desktop page flash by. */
+      .redirect-note {
+        display: none;
+        max-width: 22rem;
+        text-align: center;
+      }
+
+      html[data-redirecting] .card {
+        display: none;
+      }
+
+      html[data-redirecting="android"] .redirect-note[data-store="android"],
+      html[data-redirecting="ios"] .redirect-note[data-store="ios"] {
+        display: block;
+      }
+
+      .spinner {
+        width: 2rem;
+        height: 2rem;
+        margin: 0 auto 1rem;
+        border-radius: 9999px;
+        border: 3px solid hsl(0 0% 100% / 0.15);
+        border-top-color: var(--primary);
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .redirect-note p {
+        margin: 0;
+        color: var(--foreground);
+        font-weight: 500;
+      }
+
+      .fallback-link {
+        display: inline-block;
+        margin-top: 0.75rem;
+        color: var(--primary);
+        font-size: 0.9375rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Shown only while redirecting a phone/tablet to its store. -->
+    <div class="redirect-note" data-store="android">
+      <div class="spinner" aria-hidden="true"></div>
+      <p role="status">Opening Google Play&hellip;</p>
+      <a
+        class="fallback-link"
+        href="https://play.google.com/store/apps/details?id=com.girishkia5dservices"
+        >Tap here if the Play Store does not open</a
+      >
+    </div>
+
+    <div class="redirect-note" data-store="ios">
+      <div class="spinner" aria-hidden="true"></div>
+      <p role="status">Opening the App Store&hellip;</p>
+      <a
+        class="fallback-link"
+        href="https://apps.apple.com/in/app/kia-5d/id6751247222"
+        >Tap here if the App Store does not open</a
+      >
+    </div>
+
+    <!-- Desktop / unknown device fallback. Also what no-JS visitors see. -->
+    <main class="card">
+      <div class="glow glow-primary" aria-hidden="true"></div>
+      <div class="glow glow-accent" aria-hidden="true"></div>
+
+      <div class="content">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="3" width="14" height="14" rx="2" />
+            <path d="M5 9h14" />
+            <path d="M9 17v3" />
+            <path d="M15 17v3" />
+            <circle cx="8.5" cy="13.5" r="1" />
+            <circle cx="15.5" cy="13.5" r="1" />
+          </svg>
+        </div>
+
+        <h1>KIA-5D</h1>
+        <p class="subtitle">Vayu Vajra Service</p>
+
+        <p class="tagline">
+          Track your bus. Check schedules. See approaching vehicles.
+        </p>
+
+        <div class="stores">
+          <a
+            class="store-btn"
+            href="https://play.google.com/store/apps/details?id=com.girishkia5dservices"
+            aria-label="Get it on Google Play"
+          >
+            <span class="store-icon" aria-hidden="true">
+              <svg class="play" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z" />
+              </svg>
+            </span>
+            <span class="store-label">
+              <small>Get it on</small>
+              <strong>Google Play</strong>
+            </span>
+          </a>
+
+          <a
+            class="store-btn"
+            href="https://apps.apple.com/in/app/kia-5d/id6751247222"
+            aria-label="Download on the App Store"
+          >
+            <span class="store-icon" aria-hidden="true">
+              <svg class="apple" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+              </svg>
+            </span>
+            <span class="store-label">
+              <small>Download on the</small>
+              <strong>App Store</strong>
+            </span>
+          </a>
+        </div>
+
+        <p class="note">
+          Scan the KIA-5D QR code on your phone and the right store opens
+          automatically.
+        </p>
+
+        <a class="site-link" href="/">Back to the KIA-5D website</a>
+      </div>
+    </main>
+  </body>
+</html>

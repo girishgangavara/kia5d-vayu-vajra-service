@@ -8,7 +8,7 @@ Tailwind + shadcn/ui) so the two sites read as one product family.
 
 ## Data
 
-Every figure on the page is read live from the Supabase project that the KIA
+Every figure on the page is read live from the Vayu Vajra API (vayuvajra.girishdevstack.com) that the KIA
 Management System writes to - nothing is hardcoded:
 
 | Section       | Source                                        |
@@ -31,11 +31,11 @@ npm install
 npm run dev
 ```
 
-Optional overrides (defaults point at the existing Supabase project):
+Optional overrides (defaults point at the Vayu Vajra API):
 
 ```sh
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_ANON_KEY=...
+VITE_API_URL=...
+VITE_API_KEY=...
 ```
 
 ## Build

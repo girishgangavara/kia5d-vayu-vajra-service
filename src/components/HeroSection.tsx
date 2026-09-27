@@ -7,7 +7,7 @@ import { buildServices, fetchAssignments, fetchStops } from '@/lib/kia5d';
 
 /**
  * KIA-5D hero. Mirrors the KIA-15 hero structure (badge, gradient headline,
- * quick-info chips, 3D bus, scroll cue); the counts come from Supabase rather
+ * quick-info chips, 3D bus, scroll cue); the counts come from the Vayu Vajra API rather
  * than being written into the markup, so they cannot drift from reality.
  */
 const HeroSection = () => {

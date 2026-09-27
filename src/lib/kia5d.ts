@@ -1,8 +1,8 @@
 /**
  * KIA-5D data layer.
  *
- * Reads the same Supabase project the KIA Management System writes to, over the
- * PostgREST HTTP API so no extra client library is needed. Everything rendered
+ * Reads the Vayu Vajra API (https://vayuvajra.girishdevstack.com), the same backend the
+ * admin portal and the apps use, over its PostgREST-style HTTP API so no client library is needed. Everything rendered
  * on the site comes from these tables - nothing is hardcoded or simulated.
  *
  *   KIA_5D_MORNING / KIA_5D_AFTERNOON  timetable (toAirport / toCity per route)
@@ -14,18 +14,15 @@
  * personal data and the KIA-15 site does not publish them either.
  */
 
-const SUPABASE_URL =
-  import.meta.env.VITE_SUPABASE_URL || 'https://lfuthmexacgvbyjufbih.supabase.co';
+const API_URL = import.meta.env.VITE_API_URL || 'https://vayuvajra.girishdevstack.com';
 
-const SUPABASE_ANON_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmdXRobWV4YWNndmJ5anVmYmloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2OTkwMTYsImV4cCI6MjA3MzI3NTAxNn0.SMhKA1R9hv0ZAWDeo0V88jGt68y1gphElDuhvynbhZ0';
+/** Public read key: only signed-in admins can write through the API. */
+const API_KEY = import.meta.env.VITE_API_KEY || 'vv_anon_2d935ff0ab80f376c3d23109eb6b1532ebe44db7b7fbbb8c';
 
-async function sb<T>(path: string): Promise<T> {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+async function api<T>(path: string): Promise<T> {
+  const res = await fetch(`${API_URL}/rest/v1/${path}`, {
     headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      apikey: API_KEY,
     },
   });
   if (!res.ok) throw new Error(`Request failed (${res.status})`);
@@ -78,25 +75,25 @@ export type Direction = 'toAirport' | 'toCity';
 /* --------------------------------------------------------------- fetchers */
 
 export const fetchMorning = () =>
-  sb<ScheduleRow[]>('KIA_5D_MORNING?select=route,toAirport,toCity&order=id');
+  api<ScheduleRow[]>('KIA_5D_MORNING?select=route,toAirport,toCity&order=id');
 
 export const fetchAfternoon = () =>
-  sb<ScheduleRow[]>('KIA_5D_AFTERNOON?select=route,toAirport,toCity&order=id');
+  api<ScheduleRow[]>('KIA_5D_AFTERNOON?select=route,toAirport,toCity&order=id');
 
 /** Today's published crew/vehicle rows. `mobile` is intentionally excluded. */
 export const fetchAssignments = () =>
-  sb<AssignmentRow[]>(
+  api<AssignmentRow[]>(
     'kia_5d_routes?select=route_no,vehicle_number,crew_name,crew_id,profilepic,tripCode,start_date,depot_no&order=route_no',
   );
 
 export const fetchPositions = () =>
-  sb<PositionRow[]>(
+  api<PositionRow[]>(
     'live_vehicle_positions?select=route_no,vehicle_number,latitude,longitude,location_label,last_refresh_on,updated_at',
   );
 
 /** The 51 stops per direction that make up the KIA-5D corridor. */
 export const fetchStops = () =>
-  sb<StopRow[]>(
+  api<StopRow[]>(
     'KIA_Routes_Stops?select=routeNo,stationName,stopOrder,direction,latitude,longitude&routeNo=eq.KIA-5D&order=stopOrder',
   );
 

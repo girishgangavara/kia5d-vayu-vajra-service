@@ -6,7 +6,7 @@ Built on the KIA-15 site's design system so the two read as one product family.
 
 ## Stack
 Vite 5 + React 18 + TypeScript + Tailwind 3 + shadcn/ui, copied from
-`vayu-vajra-explorer`. Data fetched with **plain `fetch` to Supabase PostgREST**
+`vayu-vajra-explorer`. Data fetched with **plain `fetch` to the Vayu Vajra API (PostgREST-style, `vayuvajra.girishdevstack.com`)**
 and cached by the `@tanstack/react-query` already in the scaffold — deliberately
 **no `@supabase/supabase-js` dependency**.
 
@@ -35,7 +35,7 @@ npx vercel promote dpl_xxx --yes        # moves it onto the production alias
 Pipe to a file (`> /tmp/deploy.log 2>&1`), not to `tail` — `tail` buffers until
 exit so the log looks empty while it runs.
 
-## Data — Supabase `lfuthmexacgvbyjufbih`
+## Data — Vayu Vajra API (`vayuvajra.girishdevstack.com`; moved off Supabase 27-09-2026)
 Read over PostgREST with the public anon key (also embedded in the KIA admin
 app). Everything on the site is live; nothing is hardcoded.
 
